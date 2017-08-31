@@ -1,0 +1,2 @@
+export const HOMESCREEN = 'HOMESCREEN'
+export const FIRSTSCREEN = HOMESCREEN
