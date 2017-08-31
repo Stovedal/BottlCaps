@@ -38,15 +38,16 @@ export default class HomeScreen extends Component {
             onDateSelect={this.selectDate.bind(this)}
           />
         </CurtainWithContent>
-        <View style={{flex:1, backgroundColor:'white'}}></View>
-        <MoveableButton onPress={()=>console.log("MoveableButtonPress!")}>
-          Hallå hallå!
-        </MoveableButton>
-        <ExpandingButton size={100} onPress={()=>console.log("ExpandingButtonPress")}>
-          I grow!
-        </ExpandingButton>
-        <PinkLemonade/>
-        <DonaldCola/>
+        <View style={{flex:1, backgroundColor:'white'}}>
+          <MoveableButton onPress={()=>console.log("MoveableButtonPress!")}>
+            Hallå hallå!
+          </MoveableButton>
+          <ExpandingButton size={100} onPress={()=>console.log("ExpandingButtonPress")}>
+            I grow!
+          </ExpandingButton>
+          <PinkLemonade/>
+          <DonaldCola/>
+        </View>
       </View>
     )
   }

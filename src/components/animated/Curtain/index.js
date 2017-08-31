@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { Animated, PanResponder, View } from 'react-native'
 import { CurtainContentWrapper, StandardButtonWrapper, StandardButtonText, CurtainKnob } from '../../buttons/components/styledComponents'
 
-
-
 export default class Curtain extends Component {
 
   constructor(props){
@@ -11,6 +9,8 @@ export default class Curtain extends Component {
     this.state = {
       fadeIn: new Animated.Value(0),
       pan: new Animated.ValueXY(),
+      contentHeight:0,
+      distanceToScreenTop: 0,
     }
 
     this.panResponder = PanResponder.create({
@@ -32,7 +32,7 @@ export default class Curtain extends Component {
           } else {
             Animated.timing(
                 this.state.pan,
-                {toValue:{x:0,y:420}}
+                {toValue:{x:0, y:this.state.contentHeight+this.state.distanceToScreenTop}}
             ).start();
           }
           this.state.pan.flattenOffset();
@@ -42,23 +42,36 @@ export default class Curtain extends Component {
   }
 
   componentDidMount(){
-    Animated.timing(
-      this.state.fadeIn,
-      {
-        toValue: 1,
-        duration: 1000
-      }
-    ).start()
+    setTimeout(
+      ()=> {
+        this.refs.container._component.measure((fx, fy, width, height, px, py)=> {
+          this.setState({ distanceToScreenTop: py})
+        })
+      },
+      50
+    )
   }
 
   render(){
+    console.log(this.state)
+
     return(
       <Animated.View
+        ref="container"
         style={[{ minHeight: this.state.pan.y }, this.props.style]}
         >
           <CurtainContentWrapper>
-            <Animated.View removeClippedSubviews={false} style={[{ height: this.state.pan.y }, this.props.style]}>
+            <Animated.View
+              removeClippedSubviews={false}
+              style={[{ height: this.state.pan.y }, this.props.style]}
+              >
+              <View onLayout={(event) => {
+                this.setState({
+                  contentHeight: event.nativeEvent.layout.height
+                })
+              }}>
                {this.props.children}
+              </View>
             </Animated.View>
           </CurtainContentWrapper>
         <Animated.View {...this.panResponder.panHandlers}>

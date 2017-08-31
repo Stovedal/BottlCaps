@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Animated, PanResponder, Easing } from 'react-native'
+import { Animated, PanResponder, Easing, View } from 'react-native'
 
 export default class Moveable extends Component {
 
@@ -24,43 +24,32 @@ export default class Moveable extends Component {
             this.state.scale,
             { toValue: 1.1}
           ).start(),
-          Animated.spring(
-            this.state.rotation,
-            {
-              toValue: 1,
-              duration: 2000,
-              easing: Easing.linear
-            }
-          ).start(),
+          Animated.loop(
+            Animated.timing(
+              this.state.rotation,
+              {
+                toValue: 1,
+                easing: Easing.linear
+              }
+            )
+          ).start()
         )
-        this.keepSpinning()
-
       },
       onPanResponderMove: Animated.event([null,{
           dx : this.state.pan.x,
           dy : this.state.pan.y
       }]),
       onPanResponderRelease : (e, gesture) => {
-        this.state.pan.flattenOffset();
-        Animated.spring(
-          this.state.scale,
-          { toValue: 1 }
-        ).start();
+        this.state.pan.flattenOffset()
+        this.state.rotation.stopAnimation(
+          ()=>Animated.spring(
+            this.state.scale,
+            { toValue: 1 }
+          ).start()
+        )
 
       }
     });
-  }
-
-  keepSpinning(){
-        this.state.rotation.setValue(0)
-        Animated.timing(
-          this.state.rotation,
-          {
-            toValue: 1,
-            duration: 2000,
-            easing: Easing.linear
-          }
-        ).start(()=>{if(this.props.spinWhileUp){ this.keepSpinning()}})
   }
 
   componentDidMount(){
@@ -78,14 +67,14 @@ export default class Moveable extends Component {
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg']
     })
-    console.log(this.props)
     return(
       <Animated.View
         {...this.panResponder.panHandlers}
+
         style={[
           this.state.pan.getLayout(),
           this.props.style,
-          { transform: [{scale: this.state.scale}, {rotate: spin}] }
+          { transform: [ {scale: this.state.scale}, {rotate: spin}] }
         ]}
         >
         {this.props.children}
