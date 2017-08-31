@@ -19,7 +19,6 @@ export default class Moveable extends Component {
         this.state.pan.setOffset({x: this.state.pan.x._value, y: this.state.pan.y._value});
         this.state.pan.setValue({x: 0, y: 0});
         this.state.rotation.setValue(0)
-        this.setState({ isPickedUp: true});
         Animated.parallel(
           Animated.spring(
             this.state.scale,
@@ -34,6 +33,7 @@ export default class Moveable extends Component {
             }
           ).start(),
         )
+        this.keepSpinning()
 
       },
       onPanResponderMove: Animated.event([null,{
@@ -41,7 +41,6 @@ export default class Moveable extends Component {
           dy : this.state.pan.y
       }]),
       onPanResponderRelease : (e, gesture) => {
-        this.setState({ isPickedUp: false})
         this.state.pan.flattenOffset();
         Animated.spring(
           this.state.scale,
@@ -61,7 +60,7 @@ export default class Moveable extends Component {
             duration: 2000,
             easing: Easing.linear
           }
-        ).start(()=>{if(this.state.isPickedUp&&this.props.spinWhileUp || !this.state.isPickedUp&&this.props.spinWhileDown){ this.keepSpinning()}})
+        ).start(()=>{if(this.props.spinWhileUp){ this.keepSpinning()}})
   }
 
   componentDidMount(){
